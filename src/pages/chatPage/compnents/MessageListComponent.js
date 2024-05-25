@@ -10,7 +10,17 @@ import imageError from "../../../assets/icons/image-error.png";
 import MessageItem from "./MessageItem";
 
 const MessageListComponent = forwardRef(
-  ({ messageList, loggedInUserId, scrollToLastMessage, loadMoreMessages, scrolled, setScrolled }, ref) => {
+  (
+    {
+      messageList,
+      loggedInUserId,
+      scrollToLastMessage,
+      loadMoreMessages,
+      scrolled,
+      setScrolled,
+    },
+    ref
+  ) => {
     const [showPreview, setShowPreview] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [isReplyPrivtelyLoader, setIsReplyPrivtelyLoader] = useState(false);
@@ -36,21 +46,30 @@ const MessageListComponent = forwardRef(
 
     const handleScroll = () => {
       const container = ref.current;
-      if (container.scrollTop === 0 && container.scrollHeight > container.clientHeight) {
+      if (
+        container.scrollTop === 0 &&
+        container.scrollHeight > container.clientHeight
+      ) {
         // User has scrolled to the top
         loadMoreMessages();
       }
     };
 
     return (
-      <div className="flex-1 overflow-y-auto pt-24 pb-16 mb-2 bg-[#1A1D1F]" ref={ref}>
+      <div
+        className="flex-1 overflow-y-auto pt-24 pb-16 mb-2 bg-[#1A1D1F]"
+        ref={ref}
+      >
         {messageList.map((message) => {
           const isImage = message.type === "photo";
           const isVideo = message.type === "video";
           const position = message.from === loggedInUserId ? "right" : "left";
-          const bgColor = message.from === loggedInUserId ? "#535C66" : "#535C66";
-          const titleColor = message.from === loggedInUserId ? "#EF4444" : "#FEBC99";
-          const messageTitle = message.from === loggedInUserId ? "You" : message.title;
+          const bgColor =
+            message.from === loggedInUserId ? "#535C66" : "#535C66";
+          const titleColor =
+            message.from === loggedInUserId ? "#EF4444" : "#FEBC99";
+          const messageTitle =
+            message.from === loggedInUserId ? "You" : message.title;
           const textColor = "#FBFBFB";
 
           const props = {
@@ -92,7 +111,11 @@ const MessageListComponent = forwardRef(
                       className={`cursor-pointer w-[150px] h-[34px] flex items-center justify-center text-white bg-[#8391A1] rounded-md z-50 ml-2`}
                       onClick={async () => {
                         setIsReplyPrivtelyLoader(true);
-                        await handleOpenUserChat(message.from, navigate, setIsReplyPrivtelyLoader);
+                        await handleOpenUserChat(
+                          message.from,
+                          navigate,
+                          setIsReplyPrivtelyLoader
+                        );
                       }}
                       style={{
                         borderRadius: "20px",
@@ -142,13 +165,13 @@ const MessageListComponent = forwardRef(
                 styles={{
                   // backgroundColor: bgColor,
                   borderRadius: "25px",
-                  marginLeft:"30px",
+                  marginLeft: "30px",
                   color: textColor,
                   objectFit: "contain",
                 }}
-                avatar="https://www.befunky.com/images/wp/wp-2021-01-linkedin-profile-picture-after.jpg?auto=avif,webp&format=jpg&width=944"
+                avatar="https://static-00.iconduck.com/assets.00/profile-circle-icon-512x512-zxne30hp.png"
                 isFirstPersonMessage={messageTitle === "You"}
-              /> 
+              />
 
               {showPreview && messageId === message.id && (
                 <div className="absolute fixed top-0 left-0 w-screen h-screen bg-black flex items-center justify-center z-50">
@@ -161,7 +184,10 @@ const MessageListComponent = forwardRef(
                         height: "36px",
                       }}
                     >
-                      <CloseRoundedIcon fontSize="small" className="text-white h-2 w-2 mr-1" />
+                      <CloseRoundedIcon
+                        fontSize="small"
+                        className="text-white h-2 w-2 mr-1"
+                      />
                       Close
                     </button>
                     {isImage ? (
@@ -180,8 +206,14 @@ const MessageListComponent = forwardRef(
                     )}
                     {isVideo ? (
                       <div className="flex items-center justify-center text-lg z-50">
-                        <video controls className="object-contain w-full h-[100%] max-h-[90vh]">
-                          <source src={message.videoData.videoURL} type={"video/mp4"} />
+                        <video
+                          controls
+                          className="object-contain w-full h-[100%] max-h-[90vh]"
+                        >
+                          <source
+                            src={message.videoData.videoURL}
+                            type={"video/mp4"}
+                          />
                           Your browser does not support the video tag.
                         </video>
                       </div>

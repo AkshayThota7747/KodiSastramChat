@@ -85,7 +85,8 @@ const UserChatPage = () => {
 
   const scrollToLastMessage = () => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop =
+        chatContainerRef.current.scrollHeight;
     }
   };
 
@@ -206,7 +207,10 @@ const UserChatPage = () => {
   }, [chatId]);
 
   return (
-    <div className="relative h-screen flex flex-col  bg-[#1A1D1F]" onClick={() => showOptions && setShowOptions(false)}>
+    <div
+      className="relative h-screen flex flex-col  bg-[#1A1D1F]"
+      onClick={() => showOptions && setShowOptions(false)}
+    >
       {messageList ? (
         <MessageListComponent
           messageList={messageList}
@@ -235,14 +239,14 @@ const UserChatPage = () => {
         >
           <button
             key="addButton"
-            className="bg-[#8391A1] rounded-l-2xl text-blue-500 focus:outline-none pl-2"
+            className="bg-black rounded-l-2xl text-blue-500 focus:outline-none pl-2"
             onClick={handleToggleOptions}
           >
             <AddCircleOutlineRoundedIcon className="text-[#D0E6FF] text-[24px]" />
           </button>
           <input
             placeholder="Type a message..."
-            className="bg-[#8391A1] placeholder-[#D0E6FF] text-white rounded-r-2xl py-2 px-4 w-full focus:outline-none"
+            className="bg-black placeholder-[#D0E6FF] text-white rounded-r-2xl py-2 px-4 w-full focus:outline-none"
             value={inputText}
             onChange={handleInputChange}
             type="text"
@@ -285,7 +289,7 @@ const UserChatPage = () => {
           key="sendButton"
           onClick={handleSendTextMessage}
           disabled={inputText.trim() === ""}
-          className="text-blue-500 p-2 focus:outline-none flex justify-center items-center text-white bg-blue-500 rounded-lg focus:outline-none"
+          className="text-blue-500 p-2 focus:outline-none flex justify-center items-center text-white bg-[#f43f5e] rounded-lg focus:outline-none"
           style={{
             borderRadius: "20px",
             height: "36px",
@@ -333,7 +337,12 @@ const UserChatPage = () => {
         )}
       </div>
       {showFilePopup && (
-        <Popup file={inputFile} onSend={handleOnFileSend} onClose={handleOnFileClose} isSending={isSending} />
+        <Popup
+          file={inputFile}
+          onSend={handleOnFileSend}
+          onClose={handleOnFileClose}
+          isSending={isSending}
+        />
       )}
 
       {/* h-[5vh] for cct */}

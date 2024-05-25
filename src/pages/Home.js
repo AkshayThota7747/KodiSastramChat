@@ -2,7 +2,13 @@ import React, { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
-import { doc, collection, onSnapshot, query, orderBy } from "firebase/firestore";
+import {
+  doc,
+  collection,
+  onSnapshot,
+  query,
+  orderBy,
+} from "firebase/firestore";
 import { db } from "../firebase";
 import Navbar from "../common/Navbar";
 import TabPanel from "../common/TabPanel";
@@ -68,24 +74,27 @@ const Home = () => {
 
   const getUserChatsData = async () => {
     setIsFetching(true);
-    const unsub = onSnapshot(doc(db, "userChats", auth.currentUser.uid), (doc) => {
-      const userChatsArray =
-        doc.data() &&
-        Object.entries(doc.data())
-          ?.sort((a, b) => b[1].date.toDate() - a[1].date.toDate())
-          .map((chat) => {
-            return {
-              id: chat[0],
-              title: chat[1].userInfo.displayName,
-              avatar: chat[1].userInfo.photoURL,
-              subtitle: chat[1].lastMessage?.message || "say hi...",
-              date: chat[1].date?.toDate(),
-              userId: chat[1].userInfo.uid,
-            };
-          });
-      setIsFetching(false);
-      setUserChats(userChatsArray);
-    });
+    const unsub = onSnapshot(
+      doc(db, "userChats", auth.currentUser.uid),
+      (doc) => {
+        const userChatsArray =
+          doc.data() &&
+          Object.entries(doc.data())
+            ?.sort((a, b) => b[1].date.toDate() - a[1].date.toDate())
+            .map((chat) => {
+              return {
+                id: chat[0],
+                title: chat[1].userInfo.displayName,
+                avatar: chat[1].userInfo.photoURL,
+                subtitle: chat[1].lastMessage?.message || "say hi...",
+                date: chat[1].date?.toDate(),
+                userId: chat[1].userInfo.uid,
+              };
+            });
+        setIsFetching(false);
+        setUserChats(userChatsArray);
+      }
+    );
     setIsFetching(false);
     return () => {
       unsub();
@@ -119,7 +128,13 @@ const Home = () => {
     <>
       {auth.currentUser ? (
         <div className="h-screen flex flex-col bg-[#1A1D1F] font-primary">
-          {auth.currentUser && <Navbar tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />}
+          {auth.currentUser && (
+            <Navbar
+              tabs={tabs}
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+            />
+          )}
 
           <div className="flex justify-between items-center px-6">
             {/* <div className="text-xl sm:text-2xl font-bold text-[#D0E6FF]">Recent Chats</div> */}
@@ -132,19 +147,24 @@ const Home = () => {
         </button> */}
           </div>
 
-          <div style = {{
+          <div
+            style={{
               flex: "1",
               container: "true",
               mxAuto: "true",
               // background: "#1F1F1F"
-              background: "linear-gradient(to top, #614385, #2E3192 )"
+              background:
+                "linear-gradient(to top, #1e1b4b, #083344 , #2e1065 , #1e1b4b  )",
               // background : "#000000"
-
-            }}>
+            }}
+          >
             {activeTab === "grpchat" ? (
               <div className="px-4">
                 {auth.currentUser && groupChats ? (
-                  <ChatListComponent chats={groupChats} handleChatItemClick={handleGroupItemClick} />
+                  <ChatListComponent
+                    chats={groupChats}
+                    handleChatItemClick={handleGroupItemClick}
+                  />
                 ) : (
                   <div className="animate-spin mx-auto rounded-full h-6 w-6 border-t-2 border-r-2 border-black"></div>
                 )}
@@ -154,11 +174,16 @@ const Home = () => {
                 <Search />
 
                 {auth.currentUser && userChats ? (
-                  <ChatListComponent chats={userChats} handleChatItemClick={handleUserChatItemClick} />
+                  <ChatListComponent
+                    chats={userChats}
+                    handleChatItemClick={handleUserChatItemClick}
+                  />
                 ) : isFetching ? (
                   <div className="animate-spin mx-auto rounded-full h-6 w-6 border-t-2 border-r-2 border-black"></div>
                 ) : (
-                  <div className="text-center text-white">No chats yet{userChats}</div>
+                  <div className="text-center text-white">
+                    No chats yet{userChats}
+                  </div>
                 )}
               </div>
             )}

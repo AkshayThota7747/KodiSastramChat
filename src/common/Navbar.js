@@ -44,7 +44,10 @@ const Navbar = ({ tabs, activeTab, setActiveTab }) => {
           </span>
         </div> */}
         <div className="relative">
-          <button className="flex items-center focus:outline-none" onClick={handleDropdownToggle}>
+          <button
+            className="flex items-center focus:outline-none"
+            onClick={handleDropdownToggle}
+          >
             <img
               className="w-12 h-12 rounded-xl object-cover"
               src={auth.currentUser?.photoURL}
@@ -58,12 +61,13 @@ const Navbar = ({ tabs, activeTab, setActiveTab }) => {
           {dropdownOpen && (
             <ul className="absolute right-0 w-32 bg-white rounded-2xl shadow-lg py-1 z-50">
               <li>
-                <button
+                {/* TODO: Profiling Tab */}
+                {/* <button
                   className="text-center w-full block px-1 py-2 text-black hover:bg-black-200"
                   onClick={handleProfile}
                 >
                   Profile
-                </button>
+                </button> */}
                 <button
                   className="text-center w-full block px-2 py-2 text-black hover:bg-black-200"
                   onClick={handleLogout}

@@ -16,6 +16,7 @@ import "react-chat-elements/dist/main.css";
 import AddCircleOutlineRoundedIcon from "@mui/icons-material/AddCircleOutlineRounded";
 import ChatListComponent from "./chatPage/compnents/ChatListComponent";
 import Search from "../common/Search";
+import backgroundImage from "../assets/icons/chatscreenMainBg.jpeg";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -153,7 +154,7 @@ const Home = () => {
               container: "true",
               mxAuto: "true",
               // background: "#1F1F1F"
-              backgroundImage: `url('https://wallpaper.forfun.com/fetch/a0/a008f8e1d31c2ff391079470583de09c.jpeg?h=1200&r=0.5'), linear-gradient(to top, #1e1b4b, #083344 , #2e1065 , #1e1b4b)`,
+              backgroundImage: `url(${backgroundImage}), linear-gradient(to top, #1e1b4b, #083344 , #2e1065 , #1e1b4b)`,
               backgroundSize: "cover",
               backgroundPosition: "center",
               backgroundRepeat: "no-repeat",

@@ -1,6 +1,7 @@
 import React from "react";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import imageError from "../../../assets/icons/image-error.png";
 
 const Popup = ({ file, onClose, onSend, isSending }) => {
   const isImage = file.type.startsWith("image/");
@@ -15,8 +16,8 @@ const Popup = ({ file, onClose, onSend, isSending }) => {
           disabled={isSending}
           onClick={onClose}
           style={{
-            borderRadius: '20px',
-            height: '36px',
+            borderRadius: "20px",
+            height: "36px",
           }}
         >
           <CloseRoundedIcon fontSize="small" className="text-white h-2 w-2 mr-1" />
@@ -29,6 +30,9 @@ const Popup = ({ file, onClose, onSend, isSending }) => {
             src={URL.createObjectURL(file)}
             alt="uploadedImage"
             className="object-contain w-full h-full max-h-[60vh]"
+            onError={(e) => {
+              e.target.src = imageError;
+            }}
           />
         ) : // {/* </div> */}
         isVideo ? (
@@ -58,8 +62,8 @@ const Popup = ({ file, onClose, onSend, isSending }) => {
             className="text-lg ml-auto p-2 flex items-center justify-center text-white bg-blue-500 rounded-lg focus:outline-none mt-3"
             onClick={onSend}
             style={{
-              borderRadius: '20px',
-              height: '36px',
+              borderRadius: "20px",
+              height: "36px",
             }}
           >
             Send <SendRoundedIcon fontSize="small" className="text-white h-2 w-2 ml-1" />

@@ -7,7 +7,17 @@ import ImageRoundedIcon from "@mui/icons-material/ImageRounded";
 import VideocamRoundedIcon from "@mui/icons-material/VideocamRounded";
 import UploadFileRoundedIcon from "@mui/icons-material/UploadFileRounded";
 import MessageListComponent from "./compnents/MessageListComponent";
-import { collection, query, orderBy, addDoc, doc, onSnapshot, updateDoc, getCountFromServer } from "firebase/firestore";
+import {
+  collection,
+  query,
+  orderBy,
+  addDoc,
+  doc,
+  onSnapshot,
+  updateDoc,
+  getCountFromServer,
+  limitToLast,
+} from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { auth, db, storage } from "../../firebase";
 import "react-chat-elements/dist/main.css";
@@ -17,12 +27,13 @@ import { v4 } from "uuid";
 import ChatToolbar from "./compnents/ChatToolbar";
 import { startRecording, stopRecording } from "./chatUtil";
 import { AttachmentButton } from "./compnents/AttachmentIcon";
+import Compressor from "compressorjs";
 
 const fileTypeStyles = {
-  color: '#fff',
-  marginLeft: '5px',
-  fontSize: '14px'
-}
+  color: "#fff",
+  marginLeft: "5px",
+  fontSize: "14px",
+};
 
 const ChatPage = () => {
   const location = useLocation();
@@ -44,6 +55,8 @@ const ChatPage = () => {
 
   const [groupSize, setGroupSize] = useState();
 
+  const [scrolled, setScrolled] = useState(false); //handle scroll on new message send
+
   const handleOnFileClose = () => {
     setShowFilePopup(false);
     setInputFile(null);
@@ -59,8 +72,21 @@ const ChatPage = () => {
 
   const handleOptionSelection = (e, option) => {
     setShowOptions(false);
-    setInputFile(e.target.files[0]);
-    setShowFilePopup(true);
+
+    const uploadedFile = e.target.files[0];
+
+    if (uploadedFile !== null && uploadedFile.type.startsWith("image/")) {
+      new Compressor(uploadedFile, {
+        quality: 0.2,
+        success: (compressedFile) => {
+          setInputFile(compressedFile);
+          setShowFilePopup(true);
+        },
+      });
+    } else {
+      setInputFile(uploadedFile);
+      setShowFilePopup(true);
+    }
   };
 
   const scrollToLastMessage = () => {
@@ -103,11 +129,11 @@ const ChatPage = () => {
       : inputFile.type.startsWith("audio/")
       ? "audio"
       : "file";
-      
+
     try {
       window.NativeInterface.showFullscreenAdInChat();
-    }catch(e){
-      console.log('Failed to Call Native Ad from ChatPage', e)
+    } catch (e) {
+      console.log("Failed to Call Native Ad from ChatPage", e);
     }
     const fileName = inputFile.name;
     const imageRef = ref(storage, `${fileType}/${v4() + fileName}`);
@@ -139,12 +165,14 @@ const ChatPage = () => {
 
   const childCollection = groupId + "Messages";
 
-  const fetchMessagesQuery = query(
-    collection(db, "GroupChats", groupId, childCollection),
-    orderBy("createdAt", "desc")
-  );
+  const fetchMessages = async (lim = 20) => {
+    console.log("lim:", lim);
+    const fetchMessagesQuery = query(
+      collection(db, "GroupChats", groupId, childCollection),
+      orderBy("createdAt", "asc"),
+      limitToLast(lim) //change this to fetch only last n messages
+    );
 
-  const fetchMessages = async () => {
     const unsub = onSnapshot(fetchMessagesQuery, (querySnapshot) => {
       setIsFetching(true);
       var messages = [];
@@ -153,15 +181,20 @@ const ChatPage = () => {
         messages.push(setMessageObject(doc, messageData));
       });
       if (messages.length !== 0) {
-        messages.reverse();
         setMessageList(messages);
         setIsFetching(false);
-        scrollToLastMessage();
+        // scrollToLastMessage();
       }
     });
     return () => {
       unsub();
     };
+  };
+
+  const loadMoreMessages = async () => {
+    console.log("loading older messages");
+    console.log(messageList.length);
+    await fetchMessages(messageList.length + 20);
   };
 
   const getUSersCount = async () => {
@@ -177,22 +210,24 @@ const ChatPage = () => {
       const message = inputText.trim();
       setInputText("");
       if (message !== "") {
-      const createdDate = new Date();
-      await addDoc(collectionRef, {
-        createdAt: createdDate,
-        from: doc(db, "users", `${auth.currentUser.uid}`),
-        fromUsername: auth.currentUser.displayName,
-        message: message,
-        messageType: "text",
-      }).then(async (res) => {
-        await updateDoc(doc(db, "GroupChats", groupId), {
-          lastMessage: message,
-          date: createdDate,
+        const createdDate = new Date();
+        await addDoc(collectionRef, {
+          createdAt: createdDate,
+          from: doc(db, "users", `${auth.currentUser.uid}`),
+          fromUsername: auth.currentUser.displayName,
+          message: message,
+          messageType: "text",
+        }).then(async (res) => {
+          await updateDoc(doc(db, "GroupChats", groupId), {
+            lastMessage: message,
+            date: createdDate,
+          });
+          setScrolled(false);
+          setIsSending(false);
+          setInputText("");
         });
-        setIsSending(false);
-        setInputText("");
-      });
-    }}
+      }
+    }
   };
 
   useEffect(() => {
@@ -202,10 +237,13 @@ const ChatPage = () => {
   }, [groupId]);
 
   return (
-    <div className="relative h-screen flex flex-col bg-[#1A1D1F]" onClick={ () => {
-      showOptions && setShowOptions(false);
-      showToolbarPopup && setShowToolbarPopup(false);
-    }}>
+    <div
+      className="relative h-screen flex flex-col bg-[#1A1D1F]"
+      onClick={() => {
+        showOptions && setShowOptions(false);
+        showToolbarPopup && setShowToolbarPopup(false);
+      }}
+    >
       {/* <div className="flex-1 overflow-y-auto pt-24 pb-16 bg-[#1A1D1F]" ref={chatContainerRef}> */}
       {!isFetching && messageList ? (
         <MessageListComponent
@@ -213,9 +251,12 @@ const ChatPage = () => {
           loggedInUserId={auth.currentUser?.uid}
           scrollToLastMessage={scrollToLastMessage}
           ref={chatContainerRef}
+          loadMoreMessages={loadMoreMessages}
+          scrolled={scrolled}
+          setScrolled={setScrolled}
         />
       ) : (
-        <div className="animate-spin bg-[#1A1D1F] mx-auto rounded-full h-6 w-6 border-t-2 border-r-2 border-white"></div>
+        <div className="animate-spin bg-[#1A1D1F] mx-auto rounded-full h-6 w-6"></div>
       )}
       {/* </div> */}
       <div className="absolute w-screen fixed top-0 z-[50]">
@@ -230,10 +271,13 @@ const ChatPage = () => {
       </div>
       {/* bottom-[5vh]  for cct */}
       <div className="px-4 py-3 flex justify-between absolute bottom-2 w-full z-[50] bg-[#1A1D1F] items-center">
-        <div className="flex felx-1 w-full mx-2" style={{
-          borderRadius: '50px',
-          overflow: 'hidden'
-        }}>
+        <div
+          className="flex felx-1 w-full mx-2"
+          style={{
+            borderRadius: "50px",
+            overflow: "hidden",
+          }}
+        >
           <button
             key="addButton"
             className="bg-[#8391A1] rounded-l-2xl text-blue-500 focus:outline-none pl-2"
@@ -311,19 +355,21 @@ const ChatPage = () => {
           disabled={inputText.trim() === ""}
           className="text-blue-500 p-2 focus:outline-none flex justify-center items-center text-white bg-blue-500 rounded-lg focus:outline-none"
           style={{
-            borderRadius: '20px',
-            height: '36px',
+            borderRadius: "20px",
+            height: "36px",
           }}
         >
           Send <SendRoundedIcon fontSize="small" className="text-white ml-2" />
         </button>
 
         {showOptions && (
-          <div className="absolute flex flex-col justify-around left-6 bottom-12 mb-2 bg-white rounded-md shadow-lg py-2 z-10 w-28" style={{
-            backgroundColor: 'rgb(83, 92, 102)'
-          }} onClick={
-            (e) => e.stopPropagation()
-          }>
+          <div
+            className="absolute flex flex-col justify-around left-6 bottom-12 mb-2 bg-white rounded-md shadow-lg py-2 z-10 w-28"
+            style={{
+              backgroundColor: "rgb(83, 92, 102)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
             <AttachmentButton
               id={"fileInputPhoto"}
               accept={".jpg,.jpeg,.png,.gif"}

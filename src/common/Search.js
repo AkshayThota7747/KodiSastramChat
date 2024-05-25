@@ -4,6 +4,7 @@ import { auth, db } from "../firebase";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { useNavigate } from "react-router-dom";
+import imageError from "../assets/icons/image-error.png";
 
 const Search = () => {
   const navigate = useNavigate();
@@ -97,14 +98,14 @@ const Search = () => {
 
   return (
     <div className="relative flex-1">
-      <div className="bg-[#8391A1] relative flex-1 flex items-center rounded-full pl-2">
+      <div className="bg-[#161616] relative flex-1 flex items-center rounded-full pl-2">
         <SearchRoundedIcon className="text-xl text-[#D0E6FF]" />
         <input
           type="text"
           placeholder="Find a user"
           value={username}
           onChange={handleSearchInputChange}
-          className="bg-[#8391A1] placeholder-[#D0E6FF] py-2 pl-2 text-white rounded-full focus:outline-none w-full"
+          className="bg-[#161616] placeholder-[#D0E6FF] py-2 pl-2 text-white rounded-full focus:outline-none w-full"
           onFocus={() => setSearchResults(username ? searchResults : [])}
         />
         {username.trim() !== "" && (
@@ -122,11 +123,18 @@ const Search = () => {
         {searchResults.map((user) => (
           <div
             key={user.uid}
-            className="cursor-pointer text-white flex w-screen justify-between py-4 px-14 border-b border[#8391A1]"
+            className="cursor-pointer text-white flex w-screen justify-between py-4 px-14 border-b border[#1F1F1F]"
             onClick={() => handleSelect(user)}
           >
             <p>{user.username}</p>
-            <img src={user.photoURL} alt="" className="w-8 h-8 rounded-full object-cover" />
+            <img
+              src={user.photoURL}
+              alt=""
+              className="w-8 h-8 rounded-full object-cover"
+              onError={(e) => {
+                e.target.src = imageError;
+              }}
+            />
           </div>
         ))}
       </div>

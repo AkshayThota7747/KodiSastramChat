@@ -37,14 +37,17 @@ const Home = () => {
   };
 
   const tabs = [
-    { id: "privatechat", label: "Chats" },
-    { id: "grpchat", label: "Groups" },
+    { id: "privatechat", label: "Chats •" },
+    { id: "grpchat", label: "Groups •" },
   ];
 
   const getGroupsData = async () => {
     setIsFetching(true);
 
-    const fetchGroupsDataQuery = query(collection(db, "GroupChats"), orderBy("date", "desc"));
+    const fetchGroupsDataQuery = query(
+      collection(db, "GroupChats")
+      // , orderBy("date", "desc")
+    );
     const unsub = onSnapshot(fetchGroupsDataQuery, (querySnapshot) => {
       var groupChatsArray = [];
       querySnapshot.forEach((doc) => {
@@ -129,7 +132,15 @@ const Home = () => {
         </button> */}
           </div>
 
-          <div className="flex-grow container mx-auto">
+          <div style = {{
+              flex: "1",
+              container: "true",
+              mxAuto: "true",
+              // background: "#1F1F1F"
+              background: "linear-gradient(to top, #614385, #2E3192 )"
+              // background : "#000000"
+
+            }}>
             {activeTab === "grpchat" ? (
               <div className="px-4">
                 {auth.currentUser && groupChats ? (

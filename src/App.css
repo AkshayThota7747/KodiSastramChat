@@ -3,14 +3,91 @@
 }
 
 .rce-citem:hover {
-  background-color: #353839;
+  background-color: #1f1f1f;
 }
 .rce-citem {
-  background-color: #353839;
+  background-color: #1f1f1f;
+  background: #000;
+  height:88px;
 }
 .rce-citem-body--top {
   color: #ffffff;
 }
 .rce-citem-body--bottom-title {
   color: #d0e6ff;
+  font-size: 16px;
+  font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+
+.rce-citem-body--top-time {
+  color: #FFFFFF;
+}
+.rce-citem-body--top-title {
+  font-size: 18px;
+  color: #FFFFFF;
+  font-family:Verdana, Geneva, Tahoma, sans-serif
+}
+
+.rce-container-mbox {
+  /* color: #FFFF; */
+  padding: 4px;
+  display: flex;
+  flex-direction: row;
+  max-width: fit-content;
+}
+
+.rce-mbox-text {
+  color: #FFF;
+}
+
+.rce-mbox-body {
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  background: #000;
+  border-radius: 10px;
+  padding: 8px;
+}
+
+
+.rce-mbox-right-notch {
+  height: 0;
+  width: 0;
+}
+
+.rce-mbox-left-notch {
+  height: 0;
+  width: 0;
+}
+
+
+.rce-mbox-time {
+  color: #FFF;
+}
+
+
+.rce-mbox.rce-mbox-right {
+  background: #000;
+}
+
+/* .rce-mbox {
+  background: ;
+} */
+
+
+.rce-mbox  {
+  padding : 0px
+}
+
+
+
+.rce-mbox-photo {
+  margin: 20px;
+}
+
+.rce-mbox-photo--img {
+  position: relative;
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
+  border-radius: 5px;
+  max-height: max-content;
 }

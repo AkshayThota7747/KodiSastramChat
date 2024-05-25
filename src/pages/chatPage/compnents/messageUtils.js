@@ -28,6 +28,11 @@ export const setMessageObject = (doc, messageData) => {
       title: messageData.fromUsername,
       type: messageData.messageType,
       data: {
+        uri: "https://firebasestorage.googleapis.com/v0/b/kodisastram.appspot.com/o/images%2Fvideo-placeholder.jpg?alt=media&token=7ebc15dd-edd5-458d-8849-a05b28527861",
+        height: 120,
+        width: 200,
+      },
+      videoData: {
         videoURL: messageData.url,
         status: {
           click: true,

@@ -14,7 +14,7 @@ const ChatListComponent = ({ chats, handleChatItemClick }) => {
             subtitle={chatItem.subtitle}
             date={chatItem.date}
             onClick={() => handleChatItemClick(chatItem.id, chatItem.avatar, chatItem.title)}
-            className="rounded-lg my-2 text-white bg-[#8391A1]"
+            className="rounded-3xl my-2 text-white bg-[#8391A1]"
           />
         );
       })}

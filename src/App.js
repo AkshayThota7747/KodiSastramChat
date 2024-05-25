@@ -7,6 +7,8 @@ import Details from "./pages/Details";
 import ChatPage from "./pages/chatPage/ChatPage";
 import UserChatPage from "./pages/chatPage/UserChatPage";
 import "./App.css";
+import { isServerDown } from "./config/config";
+import ServerDownPage from "./pages/ServerDownPage";
 
 function App() {
   return (

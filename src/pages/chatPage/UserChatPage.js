@@ -41,6 +41,8 @@ const UserChatPage = () => {
   const [inputFile, setInputFile] = useState(null);
   const [showFilePopup, setShowFilePopup] = useState(false);
 
+  const [scrolled, setScrolled] = useState(false);
+
   const handleOnFileClose = () => {
     setShowFilePopup(false);
     setInputFile(null);
@@ -85,8 +87,7 @@ const UserChatPage = () => {
 
   const scrollToLastMessage = () => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   };
 
@@ -207,16 +208,16 @@ const UserChatPage = () => {
   }, [chatId]);
 
   return (
-    <div
-      className="relative h-screen flex flex-col  bg-[#1A1D1F]"
-      onClick={() => showOptions && setShowOptions(false)}
-    >
+    <div className="relative h-screen flex flex-col  bg-[#1A1D1F]" onClick={() => showOptions && setShowOptions(false)}>
       {messageList ? (
         <MessageListComponent
           messageList={messageList}
           loggedInUserId={auth.currentUser?.uid}
           scrollToLastMessage={scrollToLastMessage}
           ref={chatContainerRef}
+          scrolled={scrolled}
+          setScrolled={setScrolled}
+          loadMoreMessages={() => {}}
         />
       ) : (
         <div className="animate-spin bg-[#1A1D1F] mx-auto rounded-full h-6 w-6 border-t-2 border-r-2 border-white"></div>
@@ -337,12 +338,7 @@ const UserChatPage = () => {
         )}
       </div>
       {showFilePopup && (
-        <Popup
-          file={inputFile}
-          onSend={handleOnFileSend}
-          onClose={handleOnFileClose}
-          isSending={isSending}
-        />
+        <Popup file={inputFile} onSend={handleOnFileSend} onClose={handleOnFileClose} isSending={isSending} />
       )}
 
       {/* h-[5vh] for cct */}

@@ -117,8 +117,9 @@
 
 .rce-mbox {
   position: relative;
-  background: white;
+  background: #000;
   border-radius: 5px;
+  border-top-left-radius: 0;
   box-shadow: 1px 1px 1px 1px rgba(0, 0, 0, 0.2);
   border-top-left-radius: 0px;
   margin-left: 20px;
@@ -204,7 +205,7 @@
 }
 
 .rce-mbox-text:after {
-  content: '\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0';
+  content: "\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0\00a0";
 }
 
 .rce-mbox-time {
@@ -355,6 +356,10 @@
   font-style: italic;
 }
 
+.rce-mbox-video {
+  display: flex;
+  justify-content: center;
+}
 
 /* .putLast {
     order: 5

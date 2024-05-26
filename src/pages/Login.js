@@ -6,7 +6,10 @@ import { useNavigate } from "react-router-dom";
 // import { faGoogle, faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { countries } from "../config/countries";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
-import { isFacebookSigninEnabled, isGoogleSigninEnabled } from "../config/config";
+import { isFacebookSigninEnabled, isGoogleSigninEnabled, otpPerDayLimit } from "../config/config";
+import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
+import { db } from "../firebase";
+import Google from "@mui/icons-material/Google";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,6 +22,8 @@ const Login = () => {
 
   const [isSendingOTP, setIsSendingOTP] = useState(false);
   const [isVerifyingOTP, setIsVerifyingOTP] = useState(false);
+
+  const [isOTPSigninEnabled, setIsOTPSigninEnabled] = useState(true);
 
   const handlePhoneNumberInputChange = (e) => {
     setPhoneNumber(e.target.value);
@@ -50,9 +55,10 @@ const Login = () => {
     const appVerifier = window.recaptchaVerifier;
     const phoneNumberWithCountryCode = `+${selectedCountry}${phoneNumber}`;
     await signInWithPhoneNumber(auth, phoneNumberWithCountryCode, appVerifier)
-      .then((confirmationResult) => {
+      .then(async (confirmationResult) => {
         window.confirmationResult = confirmationResult;
         console.log("otp is sent");
+        await updatetodayOTPCount();
         setIsSendingOTP(false);
         setShowOtpField(true);
       })
@@ -112,10 +118,35 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
+  const checkTodayOTPCount = async () => {
+    const unsub = onSnapshot(doc(db, "todayOTPCount", "todayOTPCount"), (doc) => {
+      const dataObj = doc.data();
+      const otpCount = dataObj.todayOTPCount;
+
+      otpCount >= otpPerDayLimit ? setIsOTPSigninEnabled(false) : setIsOTPSigninEnabled(true);
+    });
+    return () => {
+      unsub();
+    };
+  };
+
+  const updatetodayOTPCount = async () => {
+    const docRef = doc(db, "todayOTPCount", "todayOTPCount");
+    const docSnap = await getDoc(docRef);
+
+    const docData = docSnap.data();
+
+    await updateDoc(doc(db, "todayOTPCount", "todayOTPCount"), {
+      todayOTPCount: docData.todayOTPCount + 1,
+    });
+  };
+
+  useEffect(async () => {
     if (auth.currentUser) {
       navigate("/");
     }
+
+    await checkTodayOTPCount();
   }, []);
 
   return (
@@ -129,88 +160,95 @@ const Login = () => {
           <h1 className="text-center text-2xl font-bold text-white mb-4">🐓 Kodi Sastram 🐓</h1>
           <form>
             {/* <div className="flex mb-4"> */}
-            <div className="relative inline-flex w-full mr-1 my-2">
-              <select
-                className="text-white appearance-none w-full bg-gray-700 bg-opacity-50 border border-gray-300 rounded-md py-2 pl-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                value={selectedCountry}
-                onChange={handleCountryChange}
-                disabled={showOtpField}
-              >
-                {countries.map((country, index) => (
-                  <option key={index} value={country.code} className="text-center">
-                    {country.name} (+{country.code})
-                  </option>
-                ))}
-              </select>
-              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                <KeyboardArrowDownRoundedIcon className="text-gray-400" />
-              </div>
-            </div>
+            {isOTPSigninEnabled ? (
+              <>
+                <div className="relative inline-flex w-full mr-1 my-2">
+                  <select
+                    className="text-white appearance-none w-full bg-gray-700 bg-opacity-50 border border-gray-300 rounded-md py-2 pl-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={selectedCountry}
+                    onChange={handleCountryChange}
+                    disabled={showOtpField}
+                  >
+                    {countries.map((country, index) => (
+                      <option key={index} value={country.code} className="text-center">
+                        {country.name} (+{country.code})
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                    <KeyboardArrowDownRoundedIcon className="text-gray-400" />
+                  </div>
+                </div>
 
-            <input
-              type="text"
-              placeholder="Mobile Number"
-              className="text-white text-center w-full bg-gray-700 bg-opacity-50 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white my-2"
-              value={phoneNumber}
-              onChange={handlePhoneNumberInputChange}
-              disabled={showOtpField}
-            />
-            {/* </div> */}
-            {!showOtpField && (
-              <button
-                type="button"
-                className="bg-blue-500 hover:bg-blue-600 text-white rounded-md py-2 px-4 w-full font-medium my-2"
-                onClick={handlePhoneSubmit}
-                disabled={isSendingOTP}
-              >
-                {isSendingOTP ? (
-                  <div className="animate-spin mx-auto rounded-full h-6 w-6 border-t-2 border-r-2 border-white"></div>
-                ) : (
-                  "Send OTP"
-                )}
-              </button>
-            )}
-            {showOtpField && (
-              <div>
                 <input
                   type="text"
-                  placeholder="OTP"
-                  className="text-white text-center w-full bg-gray-700 bg-opacity-50 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
-                  value={phoneotp}
-                  onChange={(e) => {
-                    setErrText("");
-                    setPhoneotp(e.target.value);
-                  }}
+                  placeholder="Mobile Number"
+                  className="text-white text-center w-full bg-gray-700 bg-opacity-50 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 text-white my-2"
+                  value={phoneNumber}
+                  onChange={handlePhoneNumberInputChange}
+                  disabled={showOtpField}
                 />
-                {errText && <div className="text-center text-red-500">{errText}</div>}
+                {/* </div> */}
+                {!showOtpField && (
+                  <button
+                    type="button"
+                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-md py-2 px-4 w-full font-medium my-2"
+                    onClick={handlePhoneSubmit}
+                    disabled={isSendingOTP}
+                  >
+                    {isSendingOTP ? (
+                      <div className="animate-spin mx-auto rounded-full h-6 w-6 border-t-2 border-r-2 border-white"></div>
+                    ) : (
+                      "Send OTP"
+                    )}
+                  </button>
+                )}
+                {showOtpField && (
+                  <div>
+                    <input
+                      type="text"
+                      placeholder="OTP"
+                      className="text-white text-center w-full bg-gray-700 bg-opacity-50 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2"
+                      value={phoneotp}
+                      onChange={(e) => {
+                        setErrText("");
+                        setPhoneotp(e.target.value);
+                      }}
+                    />
+                    {errText && <div className="text-center text-red-500">{errText}</div>}
 
-                <button
-                  type="button"
-                  className="bg-blue-500 hover:bg-blue-600 text-white rounded-md py-2 px-4 w-full font-medium my-2"
-                  onClick={handleOtpSubmit}
-                  disabled={isVerifyingOTP}
-                >
-                  {isVerifyingOTP ? (
-                    <div className="animate-spin mx-auto rounded-full h-6 w-6 border-t-2 border-r-2 border-white"></div>
-                  ) : (
-                    "Submit OTP"
+                    <button
+                      type="button"
+                      className="bg-blue-500 hover:bg-blue-600 text-white rounded-md py-2 px-4 w-full font-medium my-2"
+                      onClick={handleOtpSubmit}
+                      disabled={isVerifyingOTP}
+                    >
+                      {isVerifyingOTP ? (
+                        <div className="animate-spin mx-auto rounded-full h-6 w-6 border-t-2 border-r-2 border-white"></div>
+                      ) : (
+                        "Submit OTP"
+                      )}
+                    </button>
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="flex items-center justify-center mt-2">
+                  {isGoogleSigninEnabled && (
+                    <>
+                      <button
+                        type="button"
+                        className="bg-blue-500 hover:bg-blue-600 text-white rounded-md py-2 w-14 mr-2"
+                        onClick={signInWithGoogle}
+                        disabled={!isGoogleSigninEnabled}
+                      >
+                        <Google className="text-white" />
+                      </button>
+                      {/* <span className="text-white">Sign in with Google</span> */}
+                    </>
                   )}
-                </button>
-              </div>
-            )}
-
-            {/* <div className="flex items-center justify-center mt-2">
-              {isGoogleSigninEnabled && (
-                <button
-                  type="button"
-                  className="bg-red-500 hover:bg-red-600 text-white rounded-md py-2 w-10 mr-2"
-                  onClick={signInWithGoogle}
-                  disabled={!isGoogleSigninEnabled}
-                >
-                  <FontAwesomeIcon icon={faGoogle} />
-                </button>
-              )}
-              {isFacebookSigninEnabled && (
+                  {/* {isFacebookSigninEnabled && (
                 <button
                   type="button"
                   className="bg-blue-500 hover:bg-blue-600 text-white rounded-md py-2 w-10 mr-2"
@@ -219,8 +257,10 @@ const Login = () => {
                 >
                   <FontAwesomeIcon icon={faFacebook} />
                 </button>
-              )}
-            </div> */}
+              )} */}
+                </div>
+              </>
+            )}
           </form>
         </div>
       </div>

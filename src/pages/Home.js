@@ -60,7 +60,6 @@ const Home = () => {
         groupChatsArray.push(groupData);
       });
       groupChatsArray.sort((a, b) => a.id - b.id);
-      console.log(groupChatsArray);
       setGroupChats(groupChatsArray);
     });
     setIsFetching(false);

@@ -141,12 +141,13 @@ const Login = () => {
     });
   };
 
-  useEffect(async () => {
+  useEffect(() => {
     if (auth.currentUser) {
       navigate("/");
     }
 
-    await checkTodayOTPCount();
+    checkTodayOTPCount();
+    setIsOTPSigninEnabled(false);
   }, []);
 
   return (

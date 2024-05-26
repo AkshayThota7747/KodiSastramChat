@@ -87,8 +87,31 @@ const UserChatPage = () => {
 
   const scrollToLastMessage = () => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      const chatContainer = chatContainerRef.current;
+      const scrollHeight = chatContainer.scrollHeight;
+      const start = chatContainer.scrollTop;
+      const change = scrollHeight - start;
+      const increment = 20;
+      let currentTime = 0;
+
+      const animateScroll = () => {
+        currentTime += increment;
+        const easedScrollTop = easeInOutQuad(currentTime, start, change, 500);
+        chatContainer.scrollTop = easedScrollTop;
+        if (currentTime < 500) {
+          requestAnimationFrame(animateScroll);
+        }
+      };
+
+      animateScroll();
     }
+  };
+
+  const easeInOutQuad = (t, b, c, d) => {
+    t /= d / 2;
+    if (t < 1) return (c / 2) * t * t + b;
+    t--;
+    return (-c / 2) * (t * (t - 2) - 1) + b;
   };
 
   // Async Utils
@@ -155,7 +178,7 @@ const UserChatPage = () => {
       });
       setMessageList(messages);
     });
-    scrollToLastMessage();
+    // scrollToLastMessage();
   };
 
   const handleInputChange = (event) => {

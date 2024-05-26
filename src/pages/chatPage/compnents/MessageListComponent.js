@@ -21,7 +21,7 @@ const MessageListComponent = forwardRef(
 
     useEffect(() => {
       !scrolled && scrollToLastMessage();
-      // setScrolled(true);
+      setScrolled(true);
       const container = ref.current;
       if (container) {
         container.addEventListener("scroll", handleScroll);

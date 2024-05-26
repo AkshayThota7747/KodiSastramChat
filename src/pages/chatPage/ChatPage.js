@@ -401,12 +401,7 @@ const ChatPage = () => {
         )}
       </div>
       {showFilePopup && (
-        <Popup
-          file={inputFile}
-          onSend={handleOnFileSend}
-          onClose={handleOnFileClose}
-          isSending={isSending}
-        />
+        <Popup file={inputFile} onSend={handleOnFileSend} onClose={handleOnFileClose} isSending={isSending} />
       )}
       {/* h-[5vh] for cct */}
       <div className=" w-full bg-[#1A1D1F]"></div>

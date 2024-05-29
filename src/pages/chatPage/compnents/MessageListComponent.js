@@ -10,7 +10,17 @@ import imageError from "../../../assets/icons/image-error.png";
 import MessageItem from "./MessageItem";
 
 const MessageListComponent = forwardRef(
-  ({ messageList, loggedInUserId, scrollToLastMessage, loadMoreMessages, scrolled, setScrolled }, ref) => {
+  (
+    {
+      messageList,
+      loggedInUserId,
+      scrollToLastMessage,
+      loadMoreMessages,
+      scrolled,
+      setScrolled,
+    },
+    ref
+  ) => {
     const [showPreview, setShowPreview] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const [isReplyPrivtelyLoader, setIsReplyPrivtelyLoader] = useState(false);
@@ -36,23 +46,33 @@ const MessageListComponent = forwardRef(
 
     const handleScroll = () => {
       const container = ref.current;
-      if (container.scrollTop === 0 && container.scrollHeight > container.clientHeight) {
+      if (
+        container.scrollTop === 0 &&
+        container.scrollHeight > container.clientHeight
+      ) {
         // User has scrolled to the top
         loggedInUserId && loadMoreMessages();
       }
     };
 
     return (
-      <div className="flex-1 overflow-y-auto pt-24 pb-16 mb-2 bg-[#1A1D1F]" ref={ref}>
+      <div
+        className="flex-1 overflow-y-auto pt-24 pb-16 mb-2 bg-[#1A1D1F]"
+        ref={ref}
+      >
         {messageList.map((message) => {
           const isImage = message.type === "photo";
           const isVideo = message.type === "video";
           const position = message.from === loggedInUserId ? "right" : "left";
-          const borderTopLeft = message.from === loggedInUserId ? "0px" : "25px";
-          const borderTopRight = message.from === loggedInUserId ? "0px" : "25px";
+          const borderTopLeft =
+            message.from === loggedInUserId ? "0px" : "25px";
+          const borderTopRight =
+            message.from === loggedInUserId ? "0px" : "25px";
           const bgColor = message.from === loggedInUserId ? "#000" : "#535C66";
-          const titleColor = message.from === loggedInUserId ? "#EF4444" : "#FEBC99";
-          const messageTitle = message.from === loggedInUserId ? "You" : message.title;
+          const titleColor =
+            message.from === loggedInUserId ? "#EF4444" : "#FEBC99";
+          const messageTitle =
+            message.from === loggedInUserId ? "You" : message.title;
           const textColor = "#FBFBFB";
 
           const props = {
@@ -91,10 +111,14 @@ const MessageListComponent = forwardRef(
                 <>
                   {message.from !== loggedInUserId ? (
                     <div
-                      className={`cursor-pointer w-[150px] h-[34px] flex items-center justify-center text-white bg-[#8391A1] rounded-md z-50 ml-2`}
+                      className={`cursor-pointer w-[150px] h-[34px] flex items-center justify-center text-white bg-[#f43f5e] rounded-md z-50 ml-2`}
                       onClick={async () => {
                         setIsReplyPrivtelyLoader(true);
-                        await handleOpenUserChat(message.from, navigate, setIsReplyPrivtelyLoader);
+                        await handleOpenUserChat(
+                          message.from,
+                          navigate,
+                          setIsReplyPrivtelyLoader
+                        );
                       }}
                       style={{
                         borderRadius: "20px",
@@ -144,8 +168,10 @@ const MessageListComponent = forwardRef(
                 styles={{
                   // backgroundColor: bgColor,
                   borderRadius: "25px",
-                  borderTopRightRadius: message.from === loggedInUserId ? "0px" : "25px",
-                  borderTopLeftRadius: message.from === loggedInUserId ? "25px" : "0px",
+                  borderTopRightRadius:
+                    message.from === loggedInUserId ? "0px" : "25px",
+                  borderTopLeftRadius:
+                    message.from === loggedInUserId ? "25px" : "0px",
                   marginLeft: "30px",
                   color: textColor,
                   objectFit: "contain",
@@ -159,14 +185,17 @@ const MessageListComponent = forwardRef(
                 <div className="absolute fixed top-0 left-0 w-screen h-screen bg-black flex items-center justify-center z-50">
                   <div className="flex flex-col items-center justify-center relative w-[95%] h-[75%] rounded-lg">
                     <button
-                      className="text-white bg-gray-500 p-2 flex items-center justify-center rounded-lg ml-auto text-white focus:outline-none mb-3"
+                      className="text-white bg-gray-800 p-2 flex items-center justify-center rounded-lg ml-auto text-white focus:outline-none mb-3"
                       onClick={handleOnPreviewClose}
                       style={{
                         borderRadius: "20px",
                         height: "36px",
                       }}
                     >
-                      <CloseRoundedIcon fontSize="small" className="text-white h-2 w-2 mr-1" />
+                      <CloseRoundedIcon
+                        fontSize="small"
+                        className="text-white h-2 w-2 mr-1"
+                      />
                       Close
                     </button>
                     {isImage ? (
@@ -185,8 +214,14 @@ const MessageListComponent = forwardRef(
                     )}
                     {isVideo ? (
                       <div className="flex items-center justify-center text-lg z-50">
-                        <video controls className="object-contain w-full h-full max-h-[60vh]">
-                          <source src={message.videoData.videoURL} type={"video/mp4"} />
+                        <video
+                          controls
+                          className="object-contain w-full h-full max-h-[60vh]"
+                        >
+                          <source
+                            src={message.videoData.videoURL}
+                            type={"video/mp4"}
+                          />
                           Your browser does not support the video tag.
                         </video>
                       </div>

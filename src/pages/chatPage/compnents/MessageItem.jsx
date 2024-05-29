@@ -77,7 +77,7 @@ const MessageItem = ({ focus = false, notch = true, styles, ...props }) => {
               { "message-focus": focus }
             )}
           >
-            <div className="rce-mbox-body" onContextMenu={props.onContextMenu}>
+            <div className="rce-mbox-body " onContextMenu={props.onContextMenu}>
               {!props.retracted && props.forwarded === true && (
                 <div
                   className={classNames(

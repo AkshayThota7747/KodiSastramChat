@@ -1,15 +1,19 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, FacebookAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  FacebookAuthProvider,
+} from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAsZJJFz0Mp-zghDls2w3gydEgyQsLGIcA",
-  authDomain: "kodisastram.firebaseapp.com",
-  projectId: "kodisastram",
-  storageBucket: "kodisastram.appspot.com",
-  messagingSenderId: "1033442553182",
-  appId: "1:1033442553182:android:08e214812ce2e0f91fb3cf",
+  apiKey: process.env.React_App_FIREBASE_API_KEY,
+  authDomain: process.env.React_App_AUTH_DOMAIN,
+  projectId: process.env.React_App_PROJECT_ID,
+  storageBucket: process.env.React_App_STORAGE_BUCKET,
+  messagingSenderId: process.env.React_App_MESSAGING_SENDER_ID,
+  appId: process.env.React_App_APP_ID,
 };
 
 const app = initializeApp(firebaseConfig);

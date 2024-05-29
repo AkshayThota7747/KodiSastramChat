@@ -1,12 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { signInWithPopup, signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
+import {
+  signInWithPopup,
+  signInWithPhoneNumber,
+  RecaptchaVerifier,
+} from "firebase/auth";
 import { auth, googleAuthProvider, facebookAuthProvider } from "../firebase";
 import { useNavigate } from "react-router-dom";
 // import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 // import { faGoogle, faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { countries } from "../config/countries";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
-import { isFacebookSigninEnabled, isGoogleSigninEnabled, otpPerDayLimit } from "../config/config";
+import {
+  isFacebookSigninEnabled,
+  isGoogleSigninEnabled,
+  otpPerDayLimit,
+} from "../config/config";
 import { doc, getDoc, onSnapshot, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import Google from "@mui/icons-material/Google";
@@ -42,10 +50,14 @@ const Login = () => {
 
   const setupRecaptcha = () => {
     console.log("setting up recaptcha");
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
-      size: "invisible",
-      callback: (response) => {},
-    });
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      auth,
+      "recaptcha-container",
+      {
+        size: "invisible",
+        callback: (response) => {},
+      }
+    );
   };
 
   // Phone sign in
@@ -119,12 +131,17 @@ const Login = () => {
   };
 
   const checkTodayOTPCount = async () => {
-    const unsub = onSnapshot(doc(db, "todayOTPCount", "todayOTPCount"), (doc) => {
-      const dataObj = doc.data();
-      const otpCount = dataObj.todayOTPCount;
+    const unsub = onSnapshot(
+      doc(db, "todayOTPCount", "todayOTPCount"),
+      (doc) => {
+        const dataObj = doc.data();
+        const otpCount = dataObj.todayOTPCount;
 
-      otpCount >= otpPerDayLimit ? setIsOTPSigninEnabled(false) : setIsOTPSigninEnabled(true);
-    });
+        otpCount >= otpPerDayLimit
+          ? setIsOTPSigninEnabled(false)
+          : setIsOTPSigninEnabled(true);
+      }
+    );
     return () => {
       unsub();
     };
@@ -158,7 +175,9 @@ const Login = () => {
         }`}
       >
         <div className="bg-gray-800 bg-opacity-70 rounded shadow-lg p-8 w-80">
-          <h1 className="text-center text-2xl font-bold text-white mb-4">🐓 Kodi Sastram 🐓</h1>
+          <h1 className="text-center text-2xl font-bold text-white mb-4">
+            🐓 Kodi Sastram 🐓
+          </h1>
           <form>
             {/* <div className="flex mb-4"> */}
             {isOTPSigninEnabled ? (
@@ -171,7 +190,11 @@ const Login = () => {
                     disabled={showOtpField}
                   >
                     {countries.map((country, index) => (
-                      <option key={index} value={country.code} className="text-center">
+                      <option
+                        key={index}
+                        value={country.code}
+                        className="text-center"
+                      >
                         {country.name} (+{country.code})
                       </option>
                     ))}
@@ -216,7 +239,9 @@ const Login = () => {
                         setPhoneotp(e.target.value);
                       }}
                     />
-                    {errText && <div className="text-center text-red-500">{errText}</div>}
+                    {errText && (
+                      <div className="text-center text-red-500">{errText}</div>
+                    )}
 
                     <button
                       type="button"

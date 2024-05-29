@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { RecaptchaVerifier, updateProfile, onAuthStateChanged, updateEmail, linkWithPhoneNumber } from "firebase/auth";
+import {
+  RecaptchaVerifier,
+  updateProfile,
+  onAuthStateChanged,
+  updateEmail,
+  linkWithPhoneNumber,
+} from "firebase/auth";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
@@ -15,8 +21,7 @@ const Details = () => {
   const [selectedCountry, setSelectedCountry] = useState("91");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const photoURLPlaceholder =
-    "https://firebasestorage.googleapis.com/v0/b/kodisastram.appspot.com/o/profil-pic_dummy.png?alt=media&token=f754f6de-3574-426e-a959-dab4dd32ff77";
+  const photoURLPlaceholder = "../assets/icons/user_icon.png";
 
   const [isSendingOTP, setIsSendingOTP] = useState(false);
   const [isVerifyingOTP, setIsVerifyingOTP] = useState(false);
@@ -48,10 +53,14 @@ const Details = () => {
   };
 
   const setupRecaptcha = () => {
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container-details", {
-      size: "invisible",
-      callback: (response) => {},
-    });
+    window.recaptchaVerifier = new RecaptchaVerifier(
+      auth,
+      "recaptcha-container-details",
+      {
+        size: "invisible",
+        callback: (response) => {},
+      }
+    );
   };
 
   const handleCountryChange = (event) => {
@@ -63,7 +72,11 @@ const Details = () => {
     setupRecaptcha();
     const appVerifier = window.recaptchaVerifier;
     const phoneNumberWithCountryCode = `+${selectedCountry}${phoneNumber}`;
-    await linkWithPhoneNumber(auth.currentUser, phoneNumberWithCountryCode, appVerifier)
+    await linkWithPhoneNumber(
+      auth.currentUser,
+      phoneNumberWithCountryCode,
+      appVerifier
+    )
       .then(async (confirmationResult) => {
         window.confirmationResult = confirmationResult;
         setIsSendingOTP(false);
@@ -124,7 +137,9 @@ const Details = () => {
       }).catch((e) => console.log("err", e));
     }
     if (!auth.currentUser.email && email !== "") {
-      await updateEmail(auth.currentUser, email).catch((e) => console.log("err", e));
+      await updateEmail(auth.currentUser, email).catch((e) =>
+        console.log("err", e)
+      );
     }
   };
 
@@ -173,10 +188,14 @@ const Details = () => {
         }`}
       >
         <div className="bg-gray-800 bg-opacity-70 rounded shadow-lg p-8 w-80">
-          <h1 className="text-center text-2xl font-bold text-white mb-4">🐓 Kodi Sastram 🐓</h1>
+          <h1 className="text-center text-2xl font-bold text-white mb-4">
+            🐓 Kodi Sastram 🐓
+          </h1>
           {!auth.currentUser?.phoneNumber && (
             <>
-              <h1 className="text-center text-xl font-bold text-white mb-4">Verify Phone Number</h1>
+              <h1 className="text-center text-xl font-bold text-white mb-4">
+                Verify Phone Number
+              </h1>
               <form>
                 {/* <div className="flex mb-4"> */}
                 <div className="relative inline-flex w-full mr-1 my-2">
@@ -190,7 +209,11 @@ const Details = () => {
                   Select Country Code
                 </option> */}
                     {countries.map((country, index) => (
-                      <option key={index} value={country.code} className="text-center">
+                      <option
+                        key={index}
+                        value={country.code}
+                        className="text-center"
+                      >
                         {country.name} (+{country.code})
                       </option>
                     ))}
@@ -253,7 +276,10 @@ const Details = () => {
           {(!auth.currentUser?.displayName || !auth.currentUser?.email) && (
             <>
               <div className="mb-4">
-                <label htmlFor="username" className="block text-gray-300 font-medium mb-2">
+                <label
+                  htmlFor="username"
+                  className="block text-gray-300 font-medium mb-2"
+                >
                   Enter your Display Name
                 </label>
                 <input
@@ -265,8 +291,11 @@ const Details = () => {
                 />
               </div>
               <div className="mb-4">
-                <label htmlFor="email" className="text-centerblock text-gray-300 font-medium mb-2">
-                    Email Id (optional)
+                <label
+                  htmlFor="email"
+                  className="text-centerblock text-gray-300 font-medium mb-2"
+                >
+                  Email Id (optional)
                 </label>
                 <input
                   type="email"
@@ -291,16 +320,18 @@ const Details = () => {
             </>
           )}
 
-          {auth.currentUser?.phoneNumber && auth.currentUser?.displayName && auth.currentUser?.email && (
-            <div
-              className="text-white text-center cursor-pointer text-blue underline"
-              onClick={() => {
-                navigate("/");
-              }}
-            >
-              Go to chat screen
-            </div>
-          )}
+          {auth.currentUser?.phoneNumber &&
+            auth.currentUser?.displayName &&
+            auth.currentUser?.email && (
+              <div
+                className="text-white text-center cursor-pointer text-blue underline"
+                onClick={() => {
+                  navigate("/");
+                }}
+              >
+                Go to chat screen
+              </div>
+            )}
         </div>
       </div>
       <div id="recaptcha-container-details"></div>

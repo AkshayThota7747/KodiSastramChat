@@ -21,7 +21,11 @@ function App() {
             <Route path="/details" element={<Details />} />
             <Route path="/login" element={<Login />} />
             <Route exact path="/chat/:groupId" element={<ChatPage />} />
-            <Route exact path="/chat/userChat/:chatId" element={<UserChatPage />} />
+            <Route
+              exact
+              path="/chat/userChat/:chatId"
+              element={<UserChatPage />}
+            />
           </Routes>
         </section>
       </div>

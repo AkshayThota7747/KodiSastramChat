@@ -70,7 +70,7 @@ const MessageListComponent = forwardRef(
             message.from === loggedInUserId ? "0px" : "25px";
           const bgColor = message.from === loggedInUserId ? "#000" : "#535C66";
           const titleColor =
-            message.from === loggedInUserId ? "#EF4444" : "#FEBC99";
+            message.from === loggedInUserId ? "#EF4444" : "#FFD700";
           const messageTitle =
             message.from === loggedInUserId ? "You" : message.title;
           const textColor = "#FBFBFB";
@@ -175,9 +175,9 @@ const MessageListComponent = forwardRef(
                   marginLeft: "30px",
                   color: textColor,
                   objectFit: "contain",
-                  backgroundColor: bgColor,
+                  backgroundColor: "#000000",
                 }}
-                avatar="https://static-00.iconduck.com/assets.00/profile-circle-icon-512x512-zxne30hp.png"
+                avatar="https://firebasestorage.googleapis.com/v0/b/kodisastram.appspot.com/o/profil-pic_dummy.png?alt=media&token=f754f6de-3574-426e-a959-dab4dd32ff77"
                 isFirstPersonMessage={messageTitle === "You"}
               />
 

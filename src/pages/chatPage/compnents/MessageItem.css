@@ -331,6 +331,7 @@
 
 .rce-mbox-title > .rce-avatar-container {
   margin-right: 5px;
+  border-radius: 12px;
 }
 
 .rce-mbox-forwardedMessage {

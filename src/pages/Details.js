@@ -21,7 +21,8 @@ const Details = () => {
   const [selectedCountry, setSelectedCountry] = useState("91");
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
-  const photoURLPlaceholder = "../assets/icons/user_icon.png";
+  const photoURLPlaceholder =
+    "https://firebasestorage.googleapis.com/v0/b/kodisastram.appspot.com/o/profil-pic_dummy.png?alt=media&token=f754f6de-3574-426e-a959-dab4dd32ff77";
 
   const [isSendingOTP, setIsSendingOTP] = useState(false);
   const [isVerifyingOTP, setIsVerifyingOTP] = useState(false);
